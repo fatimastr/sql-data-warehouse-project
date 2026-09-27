@@ -19,7 +19,7 @@ flowchart LR
     end
 
     subgraph Silver["🥈 silver schema"]
-        S1["Cleansed & standardized<br/>equivalents of Bronze tables"]
+        S1["6 tables<br/>(same names as Bronze)"]
     end
 
     subgraph Gold["🥇 gold schema"]
