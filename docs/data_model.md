@@ -4,8 +4,8 @@ The Gold layer is modeled as a **star schema**: one central fact table (`fact_sa
 
 ```mermaid
 erDiagram
-    dim_customers ||--o{ fact_sales : "customer_key"
-    dim_products  ||--o{ fact_sales : "product_key"
+dim_customers ||--o{ fact_sales : "customer_key (PK → FK)"
+dim_products  ||--o{ fact_sales : "product_key (PK → FK)"
 
     dim_customers {
         INT customer_key PK
