@@ -1,62 +1,67 @@
-# Data Model — Star Schema (Gold Layer)
+# Data Model — Sales Data Mart (Star Schema)
 
-The Gold layer implements a **Star Schema**: one central fact table surrounded by dimension tables, connected via surrogate keys.
+The Gold layer is modeled as a **star schema**: one central fact table (`fact_sales`) that stores the sales events, surrounded by two dimension tables (`dim_customers`, `dim_products`) that describe *who* bought and *what* was bought.
 
 ```mermaid
 erDiagram
-    dim_customers ||--o{ fact_sales : "places"
-    dim_products ||--o{ fact_sales : "sold in"
+    dim_customers ||--o{ fact_sales : "customer_key"
+    dim_products  ||--o{ fact_sales : "product_key"
 
     dim_customers {
-        int customer_key PK
-        int customer_id
-        string customer_number
-        string first_name
-        string last_name
-        string country
-        string marital_status
-        string gender
-        date birth_date
-        date create_date
+        INT customer_key PK
+        INT customer_id
+        NVARCHAR(50) customer_number
+        NVARCHAR(50) first_name
+        NVARCHAR(50) last_name
+        NVARCHAR(50) country
+        NVARCHAR(50) marital_status
+        NVARCHAR(50) gender
+        DATE birth_date
+        DATE create_date
     }
 
     dim_products {
-        int product_key PK
-        int product_id
-        string product_number
-        string product_name
-        string category_id
-        string category
-        string subcategory
-        string maintenance
-        int cost
-        string line
-        date start_date
+        INT product_key PK
+        INT product_id
+        NVARCHAR(50) product_number
+        NVARCHAR(50) product_name
+        NVARCHAR(50) category_id
+        NVARCHAR(50) category
+        NVARCHAR(50) subcategory
+        NVARCHAR(50) maintenance
+        INT cost
+        NVARCHAR(50) line
+        DATE start_date
     }
 
     fact_sales {
-        string order_number
-        int product_key FK
-        int customer_key FK
-        date order_date
-        date shipping_date
-        date due_date
-        int sales_amount
-        int quantity
-        int price
+        NVARCHAR(50) order_number
+        INT product_key FK
+        INT customer_key FK
+        DATE order_date
+        DATE shipping_date
+        DATE due_date
+        INT sales_amount
+        INT quantity
+        INT price
     }
 ```
 
-## Why a Star Schema?
+## Table Roles
 
-- **Simplicity:** Easy to understand and query — ideal for BI tools like Power BI.
-- **Performance:** Fewer joins required compared to a normalized (Snowflake) schema.
-- **Trade-off accepted:** Some redundancy in dimension tables, but storage cost is negligible for this use case.
+| Table | Type | Grain / Content |
+|---|---|---|
+| `gold.fact_sales` | Fact | One row per order line (one product within one sales order) |
+| `gold.dim_customers` | Dimension | One row per customer |
+| `gold.dim_products` | Dimension | One row per current product |
 
-## Relationship Type
+## Relationships
 
-Every dimension-to-fact relationship is **one-to-many**: one customer can appear in many sales records; one product can appear in many sales records. This is why `LEFT JOIN` is used consistently when building the Gold layer views — to avoid losing dimension records that (temporarily) have no matching transactions.
+- One customer can appear in many sales rows (`dim_customers.customer_key` → `fact_sales.customer_key`).
+- One product can appear in many sales rows (`dim_products.product_key` → `fact_sales.product_key`).
 
-## Surrogate Keys
+## Business Rule
 
-Each dimension has a surrogate key (`customer_key`, `product_key`) generated within the warehouse using `ROW_NUMBER()`, independent of the source system's original identifiers. The fact table references dimensions exclusively through these surrogate keys (a process called **data lookup**), not through the original source keys.
+`sales_amount = quantity * price`
+
+For column-level descriptions, see the [Data Catalog](data_catalog.md).
