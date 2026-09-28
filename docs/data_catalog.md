@@ -10,14 +10,14 @@ This document describes the business-ready tables (views) in the `gold` schema, 
 
 | Column | Data Type | Description |
 |---|---|---|
-| `customer_key` | INT | Surrogate key uniquely identifying each customer record in the warehouse. |
+| `customer_key` | INT | Surrogate key uniquely identifying each customer record in the warehouse. Generated inside the DWH, so it has no meaning in the source systems. |
 | `customer_id` | INT | Original customer identifier from the CRM source system. |
-| `customer_number` | NVARCHAR | Alphanumeric customer identifier used for tracing back to source systems. |
-| `first_name` | NVARCHAR | Customer's first name. |
-| `last_name` | NVARCHAR | Customer's last name. |
-| `country` | NVARCHAR | Customer's country of residence (e.g., `Germany`, `United States`, `n/a`). |
-| `marital_status` | NVARCHAR | Customer's marital status (`Single`, `Married`, `n/a`). |
-| `gender` | NVARCHAR | Customer's gender (`Male`, `Female`, `n/a`). Integrated from CRM (master source) and ERP. |
+| `customer_number` | NVARCHAR(50) | Alphanumeric customer identifier used for tracing back to source systems. |
+| `first_name` | NVARCHAR(50) | Customer's first name. |
+| `last_name` | NVARCHAR(50) | Customer's last name. |
+| `country` | NVARCHAR(50) | Customer's country of residence (e.g., `Germany`, `United States`, `n/a`). |
+| `marital_status` | NVARCHAR(50) | Customer's marital status (`Single`, `Married`, `n/a`). |
+| `gender` | NVARCHAR(50) | Customer's gender (`Male`, `Female`, `n/a`). Integrated from CRM (master source) and ERP. |
 | `birth_date` | DATE | Customer's date of birth. |
 | `create_date` | DATE | Date the customer record was first created in the source system. |
 
@@ -29,16 +29,16 @@ This document describes the business-ready tables (views) in the `gold` schema, 
 
 | Column | Data Type | Description |
 |---|---|---|
-| `product_key` | INT | Surrogate key uniquely identifying each product record in the warehouse. |
+| `product_key` | INT | Surrogate key uniquely identifying each product record in the warehouse. Generated inside the DWH, so it has no meaning in the source systems. |
 | `product_id` | INT | Original product identifier from the CRM source system. |
-| `product_number` | NVARCHAR | Alphanumeric product code used for tracing back to source systems and joining with sales data. |
-| `product_name` | NVARCHAR | Descriptive name of the product. |
-| `category_id` | NVARCHAR | Identifier linking the product to its category. |
-| `category` | NVARCHAR | High-level product category (e.g., `Bikes`, `Accessories`). |
-| `subcategory` | NVARCHAR | Detailed product classification within the category. |
-| `maintenance` | NVARCHAR | Indicates whether the product requires maintenance (`Yes`/`No`). |
+| `product_number` | NVARCHAR(50) | Alphanumeric product code used for tracing back to source systems and joining with sales data. |
+| `product_name` | NVARCHAR(50) | Descriptive name of the product. |
+| `category_id` | NVARCHAR(50) | Identifier linking the product to its category. |
+| `category` | NVARCHAR(50) | High-level product category (e.g., `Bikes`, `Accessories`). |
+| `subcategory` | NVARCHAR(50) | Detailed product classification within the category. |
+| `maintenance` | NVARCHAR(50) | Indicates whether the product requires maintenance (`Yes`/`No`). |
 | `cost` | INT | Cost of the product in whole currency units. |
-| `line` | NVARCHAR | Product line (`Mountain`, `Road`, `Other Sales`, `Touring`, `n/a`). |
+| `line` | NVARCHAR(50) | Product line (`Mountain`, `Road`, `Other Sales`, `Touring`, `n/a`). |
 | `start_date` | DATE | Date the product (current version) became active. |
 
 ---
@@ -47,9 +47,11 @@ This document describes the business-ready tables (views) in the `gold` schema, 
 
 **Purpose:** Stores transactional sales data for analytical purposes, linking to the customer and product dimensions.
 
+**Grain:** one row per order line (one product within one sales order).
+
 | Column | Data Type | Description |
 |---|---|---|
-| `order_number` | NVARCHAR | Unique identifier for each sales order. |
+| `order_number` | NVARCHAR(50) | Identifier of the sales order. An order with several products appears on several rows. |
 | `product_key` | INT | Foreign key linking to `gold.dim_products`. |
 | `customer_key` | INT | Foreign key linking to `gold.dim_customers`. |
 | `order_date` | DATE | Date the order was placed. |
