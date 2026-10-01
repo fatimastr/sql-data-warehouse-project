@@ -67,5 +67,5 @@ This project was built as a hands-on learning exercise while following [Data Wit
 ## Author
 
 **Fatima Setorgi**
-[LinkedIn](https://linkedin.com/in/fatima-setorgi) · [GitHub](https://github.com/fatimastr)
+[LinkedIn](https://linkedin.com/in/fatima-setorgi-4a12a6214) · [GitHub](https://github.com/fatimastr)
 ```
