@@ -60,9 +60,6 @@ sql-data-warehouse-project/
 2. **Silver layer**: Data is cleaned, deduplicated, and standardized (e.g., unifying codes like `M`/`F` into `Male`/`Female`, fixing invalid dates, recalculating inconsistent sales figures) via a stored procedure (`silver.load_silver`).
 3. **Gold layer**: Clean data is joined, integrated across source systems, and exposed as views (`dim_customers`, `dim_products`, `fact_sales`) using surrogate keys — ready for reporting and analytics.
 
-## About This Project
-
-This project was built as a hands-on learning exercise while following [Data With Baraa](https://www.youtube.com/@DataWithBaraa)'s SQL Data Warehouse course, with all scripts debugged, adapted, and documented independently.
 
 ## Author
 
